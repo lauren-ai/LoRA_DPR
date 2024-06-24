@@ -100,11 +100,9 @@ class BertForCotMAE(nn.Module):
     def from_pretrained(cls, model_args: ModelArguments,
             *args, **kwargs):
         hf_model = AutoModelForMaskedLM.from_pretrained(*args, **kwargs)
-        #import pdb;pdb.set_trace()
         from peft import get_peft_config, get_peft_model, LoraConfig, TaskType,AdaLoraConfig
         peft_cls = LoraConfig(task_type=TaskType.SEQ_CLS, inference_mode=False, r=8, lora_alpha=32, lora_dropout=0.1,target_modules=['query' ,'key'])
-        #peft_cls = AdaLoraConfig(task_type=TaskType.SEQ_CLS, inference_mode=False, r=8, lora_alpha=32, lora_dropout=0.1,target_modules=["query","key","value"])
-
+        
         hf_model.resize_token_embeddings(30522)
         model_cls = get_peft_model(hf_model,peft_cls)
         print(model_cls.print_trainable_parameters())
